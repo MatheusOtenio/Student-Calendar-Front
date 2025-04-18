@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from typing import Dict, Optional
 
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
+API_BASE_URL = "https://student-calendar-back.onrender.com"
 
 def register(username: str, email: Optional[str], password: str) -> Optional[Dict]:
     """Realiza o registro de um novo usuário e retorna os dados do usuário criado."""
