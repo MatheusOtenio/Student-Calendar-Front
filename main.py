@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 from typing import Dict, List, Optional
-from auth import check_authentication
+from auth import check_authentication, logout, get_current_user
 from tasks import get_tasks, create_task, update_task, delete_task, render_task_form
 from schedules import get_schedules, create_schedule, update_schedule, delete_schedule, render_schedule_form
 
@@ -36,8 +36,6 @@ def api_request(endpoint: str, method: str = "GET", data: Optional[Dict] = None)
         st.error(f"Erro na comunicação com a API: {str(e)}")
         return {}
 
-# As funções de gerenciamento de tarefas e cronogramas foram movidas para seus respectivos módulos
-
 # Interface principal
 def main():
     st.title("📚 Calendário Estudantil")
@@ -45,8 +43,14 @@ def main():
     # Verificar autenticação
     check_authentication()
     
+    # Obter informações do usuário atual
+    user_data = get_current_user()
+    
     # Menu lateral
     with st.sidebar:
+        if user_data:
+            st.success(f"Bem-vindo, {user_data.get('username', 'Usuário')}!")
+            
         st.header("Menu")
         page = st.radio(
             "Navegação",
@@ -55,10 +59,7 @@ def main():
         )
         
         if st.button("Sair"):
-            if "token" in st.session_state:
-                del st.session_state["token"]
-                st.success("Logout realizado com sucesso!")
-                st.experimental_rerun()
+            logout()
     
     # Página de Tarefas
     if page == "Tarefas":
