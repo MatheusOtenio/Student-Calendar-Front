@@ -26,7 +26,7 @@ def login(username: str, password: str) -> Optional[str]:
     try:
         response = requests.post(
             f"{API_BASE_URL}/auth/login",
-            json={"username": username, "password": password}
+            data={"username": username, "password": password, "grant_type": "password"}
         )
         response.raise_for_status()
         data = response.json()
