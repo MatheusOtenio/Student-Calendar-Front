@@ -3,7 +3,7 @@ import requests
 from typing import Dict, List, Optional
 from datetime import datetime, date
 
-API_BASE_URL = "https://student-calendar-back.onrender.com"
+API_BASE_URL = "https://student-calendar-back.onrender.com/api"
 
 @st.cache_resource
 def get_tasks() -> List[Dict]:
