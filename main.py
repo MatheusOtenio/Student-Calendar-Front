@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # Configurações da API
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
+API_BASE_URL = "https://student-calendar-back.onrender.com"
 
 # Funções de utilidade para API
 def api_request(endpoint: str, method: str = "GET", data: Optional[Dict] = None) -> Dict:
