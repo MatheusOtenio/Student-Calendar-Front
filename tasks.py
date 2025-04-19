@@ -13,7 +13,7 @@ def get_tasks() -> List[Dict]:
             st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
             return []
         
-        headers = {'Authorization': f'Bearer {token}'} if token else {}
+        headers = {'Authorization': f'Bearer {st.session_state.get("token", "")}'} if st.session_state.get('token') else {}
         response = requests.get(
             f"{API_BASE_URL}/tasks",
             headers=headers
@@ -33,9 +33,13 @@ def get_tasks() -> List[Dict]:
 def create_task(task_data: Dict) -> Optional[Dict]:
     """Cria uma nova tarefa."""
     try:
+        headers = {
+            "Authorization": f"Bearer {st.session_state.get('token', '')}",
+            "Content-Type": "application/json"
+        }
         response = requests.post(
             f"{API_BASE_URL}/tasks",
-            json=new_task,
+            json=task_data,
             headers=headers
         )
         response.raise_for_status()
@@ -47,9 +51,13 @@ def create_task(task_data: Dict) -> Optional[Dict]:
 def update_task(task_id: int, task_data: Dict) -> Optional[Dict]:
     """Atualiza uma tarefa existente."""
     try:
+        headers = {
+            "Authorization": f"Bearer {st.session_state.get('token', '')}",
+            "Content-Type": "application/json"
+        }
         response = requests.put(
             f"{API_BASE_URL}/tasks/{task_id}",
-            json=updated_task,
+            json=task_data,
             headers=headers
         )
         response.raise_for_status()
@@ -61,6 +69,9 @@ def update_task(task_id: int, task_data: Dict) -> Optional[Dict]:
 def delete_task(task_id: int) -> bool:
     """Remove uma tarefa."""
     try:
+        headers = {
+            "Authorization": f"Bearer {st.session_state.get('token', '')}"
+        }
         response = requests.delete(
             f"{API_BASE_URL}/tasks/{task_id}",
             headers=headers
