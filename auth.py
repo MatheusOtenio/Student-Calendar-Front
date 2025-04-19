@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from typing import Dict, Optional
 
-API_BASE_URL = "https://student-calendar-back.onrender.com"
+API_BASE_URL = "https://student-calendar-back.onrender.com/api"
 
 def register(username: str, email: Optional[str], password: str) -> Optional[Dict]:
     """Realiza o registro de um novo usuário e retorna os dados do usuário criado."""
@@ -12,7 +12,7 @@ def register(username: str, email: Optional[str], password: str) -> Optional[Dic
             data["email"] = email
             
         response = requests.post(
-            f"{API_BASE_URL}/auth/register",
+            f"{API_BASE_URL}/register",
             json=data
         )
         response.raise_for_status()
@@ -25,7 +25,7 @@ def login(username: str, password: str) -> Optional[str]:
     """Realiza o login do usuário e retorna o token JWT."""
     try:
         response = requests.post(
-            f"{API_BASE_URL}/auth/login",
+            f"{API_BASE_URL}/login",
             data={"username": username, "password": password, "grant_type": "password"}
         )
         response.raise_for_status()
@@ -42,7 +42,7 @@ def get_current_user() -> Optional[Dict]:
         
     try:
         response = requests.get(
-            f"{API_BASE_URL}/auth/me",
+            f"{API_BASE_URL}/me",
             headers={"Authorization": f"Bearer {st.session_state.get('token', '')}"}
         )
         response.raise_for_status()
