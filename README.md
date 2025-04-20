@@ -2,6 +2,12 @@
 
 Aplicação para organização de atividades acadêmicas desenvolvida com Streamlit, permitindo o gerenciamento eficiente de tarefas e cronogramas de estudo.
 
+## Capturas de Tela
+
+![Tela principal da aplicação](img/1.png)
+
+![Gerenciamento de tarefas](img/2.png)
+
 ## Sobre o Projeto
 
 O Calendário Estudantil é uma aplicação web que auxilia estudantes na organização de suas atividades acadêmicas. Desenvolvido com Streamlit, oferece uma interface intuitiva para gerenciar tarefas e cronogramas de estudo de forma eficiente.
@@ -86,11 +92,3 @@ python -m unittest test_main.py
 3. Faça commit das suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
 4. Faça push para a branch (`git push origin feature/nova-funcionalidade`)
 5. Abra um Pull Request
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - consulte o arquivo LICENSE para obter detalhes.
-
-## Contato
-
-Para questões, sugestões ou problemas relacionados ao projeto, abra uma issue no repositório do GitHub.
