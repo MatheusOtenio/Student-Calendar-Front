@@ -47,8 +47,8 @@ O Calendário Estudantil é uma aplicação web que auxilia estudantes na organi
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/Student-Calendar-V2.git
-   cd Student-Calendar-V2/python-front
+   git clone https://github.com/MatheusOtenio/Student-Calendar-FullStack.git
+   cd Student-Calendar-FullStack
    ```
 
 2. Instale as dependências:

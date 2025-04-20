@@ -1,0 +1,48 @@
+# Arquivos de bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuição / empacotamento
+dist/
+build/
+*.egg-info/
+
+# Ambientes virtuais
+venv/
+env/
+ENV/
+.env
+
+# Banco de dados SQLite
+*.db
+*.sqlite3
+*.sqlite
+
+# Arquivos de configuração IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Arquivos de log
+*.log
+
+# Arquivos temporários
+.DS_Store
+Thumbs.db
+
+# Arquivos específicos do Streamlit
+.streamlit/secrets.toml
+
+# Arquivos de cache
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Arquivos de ambiente
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
