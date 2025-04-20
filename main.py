@@ -1,5 +1,4 @@
 import streamlit as st
-import requests
 from typing import Dict, List, Optional
 from auth import check_authentication, logout, get_current_user
 from tasks import get_tasks, create_task, update_task, delete_task, render_task_form
@@ -11,30 +10,6 @@ st.set_page_config(
     page_icon="📚",
     layout="wide"
 )
-
-# Configurações da API
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
-
-# Funções de utilidade para API
-def api_request(endpoint: str, method: str = "GET", data: Optional[Dict] = None) -> Dict:
-    """Função para realizar requisições à API com tratamento de erros."""
-    headers = {
-        "Authorization": f"Bearer {st.session_state.get('token', '')}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.request(
-            method=method,
-            url=f"{API_BASE_URL}/{endpoint}",
-            headers=headers,
-            json=data
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro na comunicação com a API: {str(e)}")
-        return {}
 
 # Interface principal
 def main():
@@ -91,6 +66,26 @@ def main():
                     st.session_state["adding_task"] = False
                     st.experimental_rerun()
         
+        # Formulário para editar tarefa existente
+        if st.session_state.get("editing_task"):
+            # Obter dados da tarefa atual
+            current_task = None
+            for task in get_tasks():
+                if task['id'] == st.session_state["editing_task"]:
+                    current_task = task
+                    break
+            
+            if current_task:
+                task_data = render_task_form(current_task)
+                if task_data:
+                    update_task(st.session_state["editing_task"], task_data)
+                    st.session_state.pop("editing_task")
+                    st.experimental_rerun()
+            else:
+                st.error("Tarefa não encontrada!")
+                st.session_state.pop("editing_task")
+                st.experimental_rerun()
+        
         # Lista de tarefas
         tasks = get_tasks()
         for task in tasks:
@@ -121,6 +116,26 @@ def main():
             if schedule_data:
                 create_schedule(schedule_data)
                 st.session_state["adding_schedule"] = False
+                st.experimental_rerun()
+        
+        # Formulário para editar cronograma existente
+        if st.session_state.get("editing_schedule"):
+            # Obter dados do cronograma atual
+            current_schedule = None
+            for schedule in get_schedules():
+                if schedule['id'] == st.session_state["editing_schedule"]:
+                    current_schedule = schedule
+                    break
+            
+            if current_schedule:
+                schedule_data = render_schedule_form(current_schedule)
+                if schedule_data:
+                    update_schedule(st.session_state["editing_schedule"], schedule_data)
+                    st.session_state.pop("editing_schedule")
+                    st.experimental_rerun()
+            else:
+                st.error("Cronograma não encontrado!")
+                st.session_state.pop("editing_schedule")
                 st.experimental_rerun()
         
         # Lista de cronogramas

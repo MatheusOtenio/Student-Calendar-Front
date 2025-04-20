@@ -1,81 +1,39 @@
 import streamlit as st
-import requests
 from typing import Dict, List, Optional
 from datetime import datetime, time
+from database import get_user_schedules, create_user_schedule, update_user_schedule, delete_user_schedule
 
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
-
-@st.cache_resource
 def get_schedules() -> List[Dict]:
     """Obtém a lista de cronogramas do usuário."""
-    try:
-        if not st.session_state.get('token'):
-            st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
-            return []
-        
-        response = requests.get(
-            f"{API_BASE_URL}/schedules",
-            headers={"Authorization": f"Bearer {st.session_state.get('token', '')}"},
-            timeout=10  # Timeout de 10 segundos
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.Timeout:
-        st.error("Erro: Tempo limite excedido ao tentar conectar com a API. Por favor, tente novamente.")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return []
-    except requests.exceptions.ConnectionError as e:
-        st.error(f"Erro de conexão com a API: {str(e)}\nVerifique sua conexão com a internet e tente novamente.")
-        return []
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao obter cronogramas: {str(e)}")
-        return []
+    
+    return get_user_schedules(st.session_state.get('token', ''))
 
 def create_schedule(schedule_data: Dict) -> Optional[Dict]:
     """Cria um novo cronograma."""
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/schedules",
-            headers={
-                "Authorization": f"Bearer {st.session_state.get('token', '')}",
-                "Content-Type": "application/json"
-            },
-            json=schedule_data
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao criar cronograma: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return None
+    
+    return create_user_schedule(st.session_state.get('token', ''), schedule_data)
 
 def update_schedule(schedule_id: int, schedule_data: Dict) -> Optional[Dict]:
     """Atualiza um cronograma existente."""
-    try:
-        response = requests.put(
-            f"{API_BASE_URL}/schedules/{schedule_id}",
-            headers={
-                "Authorization": f"Bearer {st.session_state.get('token', '')}",
-                "Content-Type": "application/json"
-            },
-            json=schedule_data
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao atualizar cronograma: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return None
+    
+    return update_user_schedule(st.session_state.get('token', ''), schedule_id, schedule_data)
 
 def delete_schedule(schedule_id: int) -> bool:
     """Remove um cronograma."""
-    try:
-        response = requests.delete(
-            f"{API_BASE_URL}/schedules/{schedule_id}",
-            headers={"Authorization": f"Bearer {st.session_state.get('token', '')}"}
-        )
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao excluir cronograma: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return False
+    
+    return delete_user_schedule(st.session_state.get('token', ''), schedule_id)
 
 def render_schedule_form(existing_data: Optional[Dict] = None) -> Dict:
     """Renderiza o formulário para criar/editar cronograma."""

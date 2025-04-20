@@ -1,55 +1,21 @@
 import streamlit as st
-import requests
 from typing import Dict, Optional
-
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
+from database import register_user, login_user, get_user_by_token
 
 def register(username: str, email: Optional[str], password: str) -> Optional[Dict]:
     """Realiza o registro de um novo usuário e retorna os dados do usuário criado."""
-    try:
-        data = {"username": username, "password": password}
-        if email:
-            data["email"] = email
-            
-        response = requests.post(
-            f"{API_BASE_URL}/register",
-            json=data
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao realizar registro: {str(e)}")
-        return None
+    return register_user(username, email, password)
 
 def login(username: str, password: str) -> Optional[str]:
-    """Realiza o login do usuário e retorna o token JWT."""
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/login",
-            data={"username": username, "password": password, "grant_type": "password"}
-        )
-        response.raise_for_status()
-        data = response.json()
-        return data.get("access_token")
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao realizar login: {str(e)}")
-        return None
+    """Realiza o login do usuário e retorna o token."""
+    return login_user(username, password)
 
 def get_current_user() -> Optional[Dict]:
-    """Obtém informações do usuário atual usando o token JWT."""
+    """Obtém informações do usuário atual usando o token."""
     if not st.session_state.get('token'):
         return None
         
-    try:
-        response = requests.get(
-            f"{API_BASE_URL}/me",
-            headers={"Authorization": f"Bearer {st.session_state.get('token', '')}"}
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao obter informações do usuário: {str(e)}")
-        return None
+    return get_user_by_token(st.session_state.get('token', ''))
 
 def check_authentication():
     """Verifica se o usuário está autenticado e exibe o formulário de login se necessário."""

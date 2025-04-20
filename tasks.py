@@ -1,86 +1,39 @@
 import streamlit as st
-import requests
 from typing import Dict, List, Optional
 from datetime import datetime, date
+from database import get_user_tasks, create_user_task, update_user_task, delete_user_task
 
-API_BASE_URL = "https://student-calendar-back.onrender.com/api"
-
-@st.cache_resource
 def get_tasks() -> List[Dict]:
     """Obtém a lista de tarefas do usuário."""
-    try:
-        if not st.session_state.get('token'):
-            st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
-            return []
-        
-        headers = {'Authorization': f'Bearer {st.session_state.get("token", "")}'} if st.session_state.get('token') else {}
-        response = requests.get(
-            f"{API_BASE_URL}/tasks",
-            headers=headers
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.Timeout:
-        st.error("Erro: Tempo limite excedido ao tentar conectar com a API. Por favor, tente novamente.")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return []
-    except requests.exceptions.ConnectionError as e:
-        st.error(f"Erro de conexão com a API: {str(e)}\nVerifique sua conexão com a internet e tente novamente.")
-        return []
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao obter tarefas: {str(e)}")
-        return []
+    
+    return get_user_tasks(st.session_state.get('token', ''))
 
 def create_task(task_data: Dict) -> Optional[Dict]:
     """Cria uma nova tarefa."""
-    try:
-        headers = {
-            "Authorization": f"Bearer {st.session_state.get('token', '')}",
-            "Content-Type": "application/json"
-        }
-        response = requests.post(
-            f"{API_BASE_URL}/tasks",
-            json=task_data,
-            headers=headers
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao criar tarefa: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return None
+    
+    return create_user_task(st.session_state.get('token', ''), task_data)
 
 def update_task(task_id: int, task_data: Dict) -> Optional[Dict]:
     """Atualiza uma tarefa existente."""
-    try:
-        headers = {
-            "Authorization": f"Bearer {st.session_state.get('token', '')}",
-            "Content-Type": "application/json"
-        }
-        response = requests.put(
-            f"{API_BASE_URL}/tasks/{task_id}",
-            json=task_data,
-            headers=headers
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao atualizar tarefa: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return None
+    
+    return update_user_task(st.session_state.get('token', ''), task_id, task_data)
 
 def delete_task(task_id: int) -> bool:
     """Remove uma tarefa."""
-    try:
-        headers = {
-            "Authorization": f"Bearer {st.session_state.get('token', '')}"
-        }
-        response = requests.delete(
-            f"{API_BASE_URL}/tasks/{task_id}",
-            headers=headers
-        )
-        response.raise_for_status()
-        return True
-    except requests.exceptions.RequestException as e:
-        st.error(f"Erro ao excluir tarefa: {str(e)}")
+    if not st.session_state.get('token'):
+        st.error("Erro: Token de autenticação não encontrado. Por favor, faça login novamente.")
         return False
+    
+    return delete_user_task(st.session_state.get('token', ''), task_id)
 
 def render_task_form(existing_data: Optional[Dict] = None) -> Dict:
     """Renderiza o formulário para criar/editar tarefa."""
